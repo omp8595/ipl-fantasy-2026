@@ -21,7 +21,7 @@
   "crons": [
     {
       "path": "/api/cron/score-engine",
-      "schedule": "*/2 * * * *"
+      "schedule": "0 * * * *"
     }
   ]
 }
