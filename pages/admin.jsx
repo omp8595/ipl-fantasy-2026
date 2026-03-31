@@ -3,7 +3,7 @@ import { collection, onSnapshot, query, orderBy, getDocs } from 'firebase/firest
 import { db } from '../src/lib/firebase'
 import { useAuth } from '../src/hooks/useAuth'
 
-const ADMIN_EMAILS = ['your-admin@email.com'] // replace with your email
+const ADMIN_EMAILS = ['omp8595@gmail.com'] // replace with your email
 
 const s = {
   page:   { maxWidth: 1200, margin: '0 auto', padding: '1.5rem', fontFamily: 'system-ui, sans-serif' },
