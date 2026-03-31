@@ -4,7 +4,7 @@
  * Fetches live scores from CricketData.org → writes to Firestore
  * Protected by CRON_SECRET so only Vercel scheduler can call it
  */
-import { adminDb } from '../../src/lib/firebaseAdmin'
+import { adminDb } from '../../../src/lib/firebaseAdmin'
 import { calcPlayerPoints } from '../../../src/lib/scoringEngine'
 import fetch from 'node-fetch'
 
@@ -212,3 +212,4 @@ async function triggerLeaderboardRecalc() {
     await batch.commit()
   }
 }
+

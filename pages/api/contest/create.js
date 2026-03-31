@@ -2,7 +2,7 @@
  * POST /api/contest/create
  * Creates a new contest in Firestore
  */
-import { adminDb, adminAuth } from '../../src/lib/firebaseAdmin'
+import { adminDb, adminAuth } from '../../../src/lib/firebaseAdmin'
 
 function generateCode() {
   return Math.random().toString(36).slice(2, 8).toUpperCase()
@@ -56,3 +56,4 @@ export default async function handler(req, res) {
 
   return res.status(200).json({ success: true, contestId: contestRef.id, inviteCode })
 }
+
