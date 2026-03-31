@@ -1,0 +1,1 @@
+[build]`npublish = ".next"`ncommand = "npm run build"`n`n[[plugins]]`npackage = "@netlify/plugin-nextjs"
