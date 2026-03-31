@@ -3,7 +3,7 @@
  * Locks a match so no more team edits (called at toss time)
  * Requires ADMIN_SECRET header
  */
-import { adminDb } from '../../../../src/lib/firebaseAdmin'
+import { adminDb } from '../../src/lib/firebaseAdmin'
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end()

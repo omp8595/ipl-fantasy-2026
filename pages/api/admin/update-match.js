@@ -2,7 +2,7 @@
  * POST /api/admin/update-match
  * Update any field on a match document (externalMatchId, status, etc.)
  */
-import { adminDb } from '../../../src/lib/firebaseAdmin'
+import { adminDb } from '../../src/lib/firebaseAdmin'
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end()

@@ -3,7 +3,7 @@
  * Validates team selection and saves to Firestore
  * Requires Firebase ID token in Authorization header
  */
-import { adminDb, adminAuth } from '../../../src/lib/firebaseAdmin'
+import { adminDb, adminAuth } from '../../src/lib/firebaseAdmin'
 
 const BUDGET_CAP = 100
 

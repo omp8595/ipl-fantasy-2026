@@ -2,7 +2,7 @@
  * POST /api/contest/join
  * Validates invite code, checks team submitted, adds user to leaderboard
  */
-import { adminDb, adminAuth } from '../../../src/lib/firebaseAdmin'
+import { adminDb, adminAuth } from '../../src/lib/firebaseAdmin'
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end()
