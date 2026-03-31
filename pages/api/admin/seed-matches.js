@@ -3,7 +3,7 @@
  * Writes all IPL 2026 fixtures to Firestore
  * Safe to run multiple times (uses set with merge)
  */
-import { adminDb } from '../../src/lib/firebaseAdmin'
+import { adminDb } from '../../../src/lib/firebaseAdmin'
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end()
@@ -33,3 +33,4 @@ export default async function handler(req, res) {
 
   return res.status(200).json({ success: true, count: matches.length })
 }
+

@@ -2,7 +2,7 @@
  * POST /api/admin/resolve-contest
  * Finalises contest — computes final ranks and prize winners
  */
-import { adminDb } from '../../src/lib/firebaseAdmin'
+import { adminDb } from '../../../src/lib/firebaseAdmin'
 
 const PRIZE_MAP = {
   winner: [100],
@@ -69,3 +69,4 @@ export default async function handler(req, res) {
     winner: lbSnap.docs[0]?.data(),
   })
 }
+
