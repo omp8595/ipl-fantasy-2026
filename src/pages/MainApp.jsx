@@ -8,7 +8,7 @@ import ProfilePage     from './ProfilePage'
 export default function MainApp() {
   const { user } = useAuth()
   const [tab, setTab]               = useState('contests')
-  const [activeContest, setContest] = useState({ id: null, name: null })
+  const [showMenu, setShowMenu] = useState(false)`n  const [activeContest, setContest] = useState({ id: null, name: null })
 
   function handleSelectContest(id, name) {
     setContest({ id, name })
@@ -40,10 +40,7 @@ export default function MainApp() {
       <div style={s.header}>
         <div style={s.logo}><span style={{ color: '#FF6B00' }}>IPL</span> Fantasy 2026</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={s.avatar}>{ini}</div>
-          <span style={{ fontSize: 13, fontWeight: 500 }}>
-            {user?.displayName || user?.email?.split('@')[0]}
-          </span>
+          <div style={{position:'relative'}}><div style={{...s.avatar,cursor:'pointer'}} onClick={()=>setShowMenu(m=>!m)}>{ini}</div>{showMenu&&<div style={{position:'absolute',top:40,right:0,background:'#fff',border:'0.5px solid #e5e5e5',borderRadius:8,padding:'8px',minWidth:160,zIndex:99}}><div style={{fontSize:13,fontWeight:500,padding:'4px 8px',marginBottom:4}}>{user?.displayName||user?.email?.split('@')[0]}</div><hr style={{margin:'4px 0',border:'none',borderTop:'0.5px solid #e5e5e5'}}/><button onClick={logout} style={{width:'100%',padding:'6px 8px',border:'none',background:'transparent',cursor:'pointer',fontSize:13,color:'#dc2626',textAlign:'left',fontFamily:'inherit'}}>Sign out</button></div>}</div>
         </div>
       </div>
 
@@ -64,6 +61,8 @@ export default function MainApp() {
     </div>
   )
 }
+
+
 
 
 
