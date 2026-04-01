@@ -71,21 +71,7 @@ export default function ContestsPage({ onSelectContest }) {
     }
   }
 
-  async function handleJoin(contestId) {
-    const contest = contests.find(c => c.id === contestId);
-    try {
-      const result = await callFn.joinContest({ contestId, inviteCode: contest.inviteCode });
-      setJoinedIds(prev => new Set([...prev, contestId]));
-      showToast(`Joined "${result.data.contestName}"!`);
-    } catch (err) {
-      const msg = {
-        'failed-precondition': 'Submit your team for this match first',
-        'already-exists': 'Already joined this contest',
-        'resource-exhausted': 'Contest is full',
-      }[err.code] || err.message;
-      showToast(msg || 'Error joining contest');
-    }
-  }
+  async function handleJoin(contestId) { const contest = contests.find(c => c.id === contestId); if (!contest) { showToast('Contest not found'); return; } try { const { doc, setDoc, updateDoc, increment, serverTimestamp, getDoc } = require('firebase/firestore'); const lbRef = doc(db, 'contests', contestId, 'leaderboard', user.uid); const existing = await getDoc(lbRef); if (existing.exists()) { showToast('Already joined this contest'); return; } await setDoc(lbRef, { userId: user.uid, displayName: user.displayName || user.email?.split('@')[0] || 'Player', totalScore: 0, rank: 1, joinedAt: serverTimestamp(), breakdown: {}, lastUpdated: serverTimestamp() }); await updateDoc(doc(db, 'contests', contestId), { memberCount: increment(1) }); setJoinedIds(prev => new Set([...prev, contestId])); showToast('Joined ' + contest.name + '!'); } catch(err) { showToast('Error: ' + err.message); } }
 
   async function handleJoinByCode() {
     const code = joinCode.trim().toUpperCase();
@@ -233,6 +219,7 @@ export default function ContestsPage({ onSelectContest }) {
     </div>
   );
 }
+
 
 
 
