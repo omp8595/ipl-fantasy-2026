@@ -1,5 +1,5 @@
-import { useState } from 'react';
-
+﻿import { useState } from 'react';
+import { callFn } from '../lib/firebase';
 import { useAuth } from '../hooks/useAuth';
 
 const BUDGET = 100;
@@ -14,10 +14,10 @@ const SQUADS = {
 };
 
 const MATCH_OPTIONS = [
-  { id: 'CSK_RR_2026_M03', label: 'CSK vs RR G�� Mar 30 (Live)', teams: ['CSK', 'RR'] },
-  { id: 'GT_PBKS_2026_M04', label: 'GT vs PBKS G�� Mar 30', teams: ['GT', 'PBKS'] },
-  { id: 'LSG_DC_2026_M05', label: 'LSG vs DC G�� Apr 1', teams: ['LSG', 'DC'] },
-  { id: 'MI_DC_2026_M08',  label: 'MI vs DC G�� Apr 4',  teams: ['MI', 'DC'] },
+  { id: 'CSK_RR_2026_M03', label: 'CSK vs RR ΓÇö Mar 30 (Live)', teams: ['CSK', 'RR'] },
+  { id: 'GT_PBKS_2026_M04', label: 'GT vs PBKS ΓÇö Mar 30', teams: ['GT', 'PBKS'] },
+  { id: 'LSG_DC_2026_M05', label: 'LSG vs DC ΓÇö Apr 1', teams: ['LSG', 'DC'] },
+  { id: 'MI_DC_2026_M08',  label: 'MI vs DC ΓÇö Apr 4',  teams: ['MI', 'DC'] },
 ];
 
 export default function SelectTeamPage() {
@@ -103,7 +103,7 @@ export default function SelectTeamPage() {
             <div style={{ height: '100%', borderRadius: 2, background: pct > 90 ? '#ef4444' : pct > 75 ? '#f59e0b' : '#FF6B00', width: pct + '%', transition: 'width .3s' }} />
           </div>
           <div style={{ fontSize: 11, color: '#888', marginBottom: '.75rem' }}>
-            {selected.length}/11 -+ {capId && vcId ? <span style={{ color: '#16a34a' }}>C & VC set G��</span> : 'C & VC not set'}
+            {selected.length}/11 ┬╖ {capId && vcId ? <span style={{ color: '#16a34a' }}>C & VC set Γ£ô</span> : 'C & VC not set'}
           </div>
 
           {/* Slot grid */}
@@ -121,7 +121,7 @@ export default function SelectTeamPage() {
                     <>
                       <div style={{ fontSize: 9, color: TEAM_COLORS[team] || '#888' }}>{team}</div>
                       <div style={{ fontSize: 10, fontWeight: 500 }}>{name.split(' ').slice(-1)[0]}</div>
-                      <button onClick={() => removePlayer(pid)} style={{ position: 'absolute', top: -5, left: -5, width: 13, height: 13, borderRadius: '50%', background: '#fef2f2', border: 'none', cursor: 'pointer', fontSize: 9, color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}>+�</button>
+                      <button onClick={() => removePlayer(pid)} style={{ position: 'absolute', top: -5, left: -5, width: 13, height: 13, borderRadius: '50%', background: '#fef2f2', border: 'none', cursor: 'pointer', fontSize: 9, color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}>├ù</button>
                     </>
                   ) : <span style={{ fontSize: 10, color: '#ccc' }}>Empty</span>}
                 </div>
@@ -162,7 +162,7 @@ export default function SelectTeamPage() {
                   <div style={{ width: 34, height: 34, borderRadius: '50%', background: col + '22', color: col, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 500, flexShrink: 0 }}>{ini}</div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.n}</div>
-                    <div style={{ fontSize: 10, color: '#888' }}><span style={{ color: col, fontWeight: 500 }}>{p.team}</span> -+ {p.r}</div>
+                    <div style={{ fontSize: 10, color: '#888' }}><span style={{ color: col, fontWeight: 500 }}>{p.team}</span> ┬╖ {p.r}</div>
                   </div>
                   <div style={{ textAlign: 'right', flexShrink: 0 }}>
                     <div style={{ fontSize: 13, fontWeight: 500 }}>{p.c} pts</div>
@@ -184,5 +184,4 @@ export default function SelectTeamPage() {
     </div>
   );
 }
-
 
