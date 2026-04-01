@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+﻿import { useState } from 'react'; import { useTeamLock, TeamLockBanner } from '../hooks/useTeamLock';
 
 import { useAuth } from '../hooks/useAuth';
 
@@ -35,7 +35,7 @@ export default function SelectTeamPage() {
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState('');
 
-  const match = MATCH_OPTIONS.find(m => m.id === matchId);
+  const { isLocked } = useTeamLock(matchId); const match = MATCH_OPTIONS.find(m => m.id === matchId);
   const pool = match.teams.flatMap(t =>
     (SQUADS[t] || []).map(p => ({ ...p, team: t, id: `${t}_${p.n.replace(/\s+/g,'_')}` }))
   ).filter(p => roleFilter === 'ALL' || p.r === roleFilter);
@@ -47,7 +47,7 @@ export default function SelectTeamPage() {
 
   function addPlayer(id) {
     if (selected.includes(id)) { removePlayer(id); return; }
-    if (selected.length >= 11) { showToast('Team full!'); return; }
+    if (isLocked) { showToast('Team is locked!'); return; } if (selected.length >= 11) { showToast('Team full!'); return; }
     const p = pool.find(x => x.id === id);
     if (!p) return;
     if (budgetUsed + p.c > BUDGET) { showToast('Over budget!'); return; }
