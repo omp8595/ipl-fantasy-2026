@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 
 import { useAuth } from '../hooks/useAuth';
 
@@ -10,14 +10,19 @@ const SQUADS = {
   RR:[{n:'Yashasvi Jaiswal',r:'BAT',c:10.0},{n:'Ravindra Jadeja',r:'AR',c:9.5},{n:'Jofra Archer',r:'BOWL',c:9.0},{n:'Riyan Parag',r:'AR',c:8.5},{n:'Ravi Bishnoi',r:'BOWL',c:8.0},{n:'Sam Curran',r:'AR',c:8.0},{n:'Dhruv Jurel',r:'WK',c:7.5},{n:'Shimron Hetmyer',r:'BAT',c:7.5},{n:'Nandre Burger',r:'BOWL',c:7.5},{n:'Vaibhav Suryavanshi',r:'BAT',c:7.0},{n:'Adam Milne',r:'BOWL',c:7.0},{n:'Tushar Deshpande',r:'BOWL',c:7.0}],
   GT:[{n:'Shubman Gill',r:'BAT',c:10.0},{n:'Rashid Khan',r:'AR',c:10.0},{n:'Jos Buttler',r:'WK',c:9.5},{n:'Kagiso Rabada',r:'BOWL',c:9.5},{n:'Mohammed Siraj',r:'BOWL',c:8.5},{n:'Sai Sudharsan',r:'BAT',c:8.5},{n:'Washington Sundar',r:'AR',c:8.0},{n:'Glenn Phillips',r:'BAT',c:7.5},{n:'Jason Holder',r:'AR',c:7.5},{n:'Prasidh Krishna',r:'BOWL',c:7.5},{n:'Rahul Tewatia',r:'AR',c:7.5},{n:'Kumar Kushagra',r:'WK',c:6.0}],
   MI:[{n:'Rohit Sharma',r:'BAT',c:10.0},{n:'Jasprit Bumrah',r:'BOWL',c:10.5},{n:'Suryakumar Yadav',r:'BAT',c:10.0},{n:'Hardik Pandya',r:'AR',c:10.0},{n:'Tilak Varma',r:'BAT',c:8.5},{n:'Ryan Rickelton',r:'WK',c:7.5},{n:'Trent Boult',r:'BOWL',c:8.5},{n:'Will Jacks',r:'AR',c:8.0},{n:'Mitchell Santner',r:'AR',c:7.5},{n:'Deepak Chahar',r:'BOWL',c:7.5},{n:'Naman Dhir',r:'AR',c:6.5},{n:'Robin Minz',r:'WK',c:5.5}],
+  DC:[{n:'KL Rahul',r:'WK',c:10.0},{n:'Mitchell Starc',r:'BOWL',c:9.5},{n:'Axar Patel',r:'AR',c:9.0},{n:'Kuldeep Yadav',r:'BOWL',c:9.0},{n:'David Miller',r:'BAT',c:8.5},{n:'Tristan Stubbs',r:'WK',c:7.5},{n:'Karun Nair',r:'BAT',c:7.5},{n:'T. Natarajan',r:'BOWL',c:7.5},{n:'Prithvi Shaw',r:'BAT',c:7.0},{n:'Ashutosh Sharma',r:'AR',c:7.0},{n:'Sameer Rizvi',r:'AR',c:6.5},{n:'Pathum Nissanka',r:'BAT',c:7.5}],
+  KKR:[{n:'Ajinkya Rahane',r:'BAT',c:8.0},{n:'Cameron Green',r:'AR',c:9.5},{n:'Sunil Narine',r:'AR',c:9.0},{n:'Varun Chakravarthy',r:'BOWL',c:8.5},{n:'Rinku Singh',r:'BAT',c:8.5},{n:'Finn Allen',r:'WK',c:8.0},{n:'Rachin Ravindra',r:'AR',c:8.0},{n:'Harshit Rana',r:'BOWL',c:7.5},{n:'Akash Deep',r:'BOWL',c:7.5},{n:'Ramandeep Singh',r:'AR',c:6.5},{n:'Rovman Powell',r:'BAT',c:7.5},{n:'Vaibhav Arora',r:'BOWL',c:7.0}],
+  SRH:[{n:'Pat Cummins',r:'BOWL',c:9.5},{n:'Travis Head',r:'BAT',c:9.5},{n:'Abhishek Sharma',r:'AR',c:8.5},{n:'Heinrich Klaasen',r:'WK',c:9.0},{n:'Ishan Kishan',r:'WK',c:8.5},{n:'Liam Livingstone',r:'AR',c:8.0},{n:'Harshal Patel',r:'AR',c:7.5},{n:'Shivam Mavi',r:'BOWL',c:7.0},{n:'Zeeshan Ansari',r:'BOWL',c:6.5},{n:'Brydon Carse',r:'AR',c:7.0},{n:'Nitish Kumar Reddy',r:'AR',c:8.0},{n:'Kamindu Mendis',r:'AR',c:7.5}],
+  PBKS:[{n:'Shreyas Iyer',r:'BAT',c:9.5},{n:'Arshdeep Singh',r:'BOWL',c:9.0},{n:'Yuzvendra Chahal',r:'BOWL',c:8.5},{n:'Marcus Stoinis',r:'AR',c:8.5},{n:'Prabhsimran Singh',r:'WK',c:8.0},{n:'Marco Jansen',r:'AR',c:8.0},{n:'Lockie Ferguson',r:'BOWL',c:8.0},{n:'Shashank Singh',r:'BAT',c:7.5},{n:'Nehal Wadhera',r:'BAT',c:7.0},{n:'Priyansh Arya',r:'AR',c:7.0},{n:'Musheer Khan',r:'AR',c:7.0},{n:'Azmatullah Omarzai',r:'AR',c:7.0}],
+  RCB:[{n:'Virat Kohli',r:'BAT',c:10.5},{n:'Rajat Patidar',r:'BAT',c:9.0},{n:'Josh Hazlewood',r:'BOWL',c:9.0},{n:'Phil Salt',r:'WK',c:8.5},{n:'Tim David',r:'AR',c:8.5},{n:'Krunal Pandya',r:'AR',c:8.0},{n:'Devdutt Padikkal',r:'BAT',c:8.0},{n:'Venkatesh Iyer',r:'AR',c:8.0},{n:'Bhuvneshwar Kumar',r:'BOWL',c:8.0},{n:'Yash Dayal',r:'BOWL',c:7.0},{n:'Jacob Bethell',r:'AR',c:7.5},{n:'Romario Shepherd',r:'AR',c:7.0}],
   LSG:[{n:'Rishabh Pant',r:'WK',c:10.5},{n:'Mohammad Shami',r:'BOWL',c:9.5},{n:'Mitchell Marsh',r:'AR',c:9.0},{n:'Nicholas Pooran',r:'WK',c:8.5},{n:'Wanindu Hasaranga',r:'AR',c:8.5},{n:'Anrich Nortje',r:'BOWL',c:8.5},{n:'Aiden Markram',r:'AR',c:8.0},{n:'Mayank Yadav',r:'BOWL',c:8.0},{n:'Josh Inglis',r:'WK',c:7.5},{n:'Avesh Khan',r:'BOWL',c:7.5},{n:'Abdul Samad',r:'AR',c:7.0},{n:'Ayush Badoni',r:'AR',c:7.0}],
 };
 
 const MATCH_OPTIONS = [
-  { id: 'CSK_RR_2026_M03', label: 'CSK vs RR G�� Mar 30 (Live)', teams: ['CSK', 'RR'] },
-  { id: 'GT_PBKS_2026_M04', label: 'GT vs PBKS G�� Mar 30', teams: ['GT', 'PBKS'] },
-  { id: 'LSG_DC_2026_M05', label: 'LSG vs DC G�� Apr 1', teams: ['LSG', 'DC'] },
-  { id: 'MI_DC_2026_M08',  label: 'MI vs DC G�� Apr 4',  teams: ['MI', 'DC'] },
+  { id: 'CSK_RR_2026_M03', label: 'CSK vs RR â€” Mar 30 (Live)', teams: ['CSK', 'RR'] },
+  { id: 'GT_PBKS_2026_M04', label: 'GT vs PBKS â€” Mar 30', teams: ['GT', 'PBKS'] },
+  { id: 'LSG_DC_2026_M05', label: 'LSG vs DC â€” Apr 1', teams: ['LSG', 'DC'] },
+  { id: 'MI_DC_2026_M08',  label: 'MI vs DC â€” Apr 4',  teams: ['MI', 'DC'] },
 ];
 
 export default function SelectTeamPage() {
@@ -103,7 +108,7 @@ export default function SelectTeamPage() {
             <div style={{ height: '100%', borderRadius: 2, background: pct > 90 ? '#ef4444' : pct > 75 ? '#f59e0b' : '#FF6B00', width: pct + '%', transition: 'width .3s' }} />
           </div>
           <div style={{ fontSize: 11, color: '#888', marginBottom: '.75rem' }}>
-            {selected.length}/11 -+ {capId && vcId ? <span style={{ color: '#16a34a' }}>C & VC set G��</span> : 'C & VC not set'}
+            {selected.length}/11 Â· {capId && vcId ? <span style={{ color: '#16a34a' }}>C & VC set âœ“</span> : 'C & VC not set'}
           </div>
 
           {/* Slot grid */}
@@ -121,7 +126,7 @@ export default function SelectTeamPage() {
                     <>
                       <div style={{ fontSize: 9, color: TEAM_COLORS[team] || '#888' }}>{team}</div>
                       <div style={{ fontSize: 10, fontWeight: 500 }}>{name.split(' ').slice(-1)[0]}</div>
-                      <button onClick={() => removePlayer(pid)} style={{ position: 'absolute', top: -5, left: -5, width: 13, height: 13, borderRadius: '50%', background: '#fef2f2', border: 'none', cursor: 'pointer', fontSize: 9, color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}>+�</button>
+                      <button onClick={() => removePlayer(pid)} style={{ position: 'absolute', top: -5, left: -5, width: 13, height: 13, borderRadius: '50%', background: '#fef2f2', border: 'none', cursor: 'pointer', fontSize: 9, color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}>Ã—</button>
                     </>
                   ) : <span style={{ fontSize: 10, color: '#ccc' }}>Empty</span>}
                 </div>
@@ -162,7 +167,7 @@ export default function SelectTeamPage() {
                   <div style={{ width: 34, height: 34, borderRadius: '50%', background: col + '22', color: col, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 500, flexShrink: 0 }}>{ini}</div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.n}</div>
-                    <div style={{ fontSize: 10, color: '#888' }}><span style={{ color: col, fontWeight: 500 }}>{p.team}</span> -+ {p.r}</div>
+                    <div style={{ fontSize: 10, color: '#888' }}><span style={{ color: col, fontWeight: 500 }}>{p.team}</span> Â· {p.r}</div>
                   </div>
                   <div style={{ textAlign: 'right', flexShrink: 0 }}>
                     <div style={{ fontSize: 13, fontWeight: 500 }}>{p.c} pts</div>
@@ -184,5 +189,4 @@ export default function SelectTeamPage() {
     </div>
   );
 }
-
 
