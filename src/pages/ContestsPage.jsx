@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
-import {
-  collection, query, onSnapshot, doc, getDoc,
-  addDoc, serverTimestamp, where, getDocs,
-} from 'firebase/firestore';
-import { db, callFn } from '../lib/firebase';
+import { collection, query, onSnapshot, doc, getDoc, setDoc, updateDoc, addDoc, getDocs, where, increment, serverTimestamp } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import { useAuth } from '../hooks/useAuth';
 
 export default function ContestsPage({ onSelectContest }) {
@@ -15,10 +12,9 @@ export default function ContestsPage({ onSelectContest }) {
   const [showCreate, setShowCreate] = useState(false);
   const [joinCode, setJoinCode] = useState('');
   const [creating, setCreating] = useState(false);
-  const [form, setForm] = useState({ name: '', matchId: 'CSK_RR_2026_M03', max: 10, fee: 0, prizeType: 'winner' });
+  const [form, setForm] = useState({ name: '', matchId: 'CSK_RR_2026_M03', max: 10, prizeType: 'winner' });
   const [toast, setToast] = useState('');
 
-  // Real-time contests listener
   useEffect(() => {
     const q = query(collection(db, 'contests'));
     const unsub = onSnapshot(q, snap => {
@@ -28,20 +24,26 @@ export default function ContestsPage({ onSelectContest }) {
     return unsub;
   }, []);
 
-  // Check which contests this user has joined
   useEffect(() => {
-    if (!user) return;
+    if (!user || !contests.length) return;
     const checkJoined = async () => {
       const ids = new Set();
       for (const c of contests) {
-        const ref = doc(db, 'contests', c.id, 'leaderboard', user.uid);
-        const snap = await getDoc(ref);
-        if (snap.exists()) ids.add(c.id);
+        try {
+          const ref = doc(db, 'contests', c.id, 'leaderboard', user.uid);
+          const snap = await getDoc(ref);
+          if (snap.exists()) ids.add(c.id);
+        } catch (e) {}
       }
       setJoinedIds(ids);
     };
-    if (contests.length) checkJoined();
+    checkJoined();
   }, [contests, user]);
+
+  function showToast(msg) {
+    setToast(msg || 'Something went wrong');
+    setTimeout(() => setToast(''), 3000);
+  }
 
   async function createContest() {
     if (!form.name.trim()) return showToast('Enter a contest name');
@@ -57,13 +59,13 @@ export default function ContestsPage({ onSelectContest }) {
         maxParticipants: parseInt(form.max) || 10,
         entryFee: 0,
         prizeType: form.prizeType,
-        prize: 'Bragging rights 🏆',
+        prize: 'Bragging rights',
         status: 'open',
         memberCount: 0,
         createdAt: serverTimestamp(),
       });
       setShowCreate(false);
-      showToast(`Contest created! Code: ${inviteCode}`);
+      showToast('Contest created! Code: ' + inviteCode);
     } catch (err) {
       showToast('Error: ' + err.message);
     } finally {
@@ -72,34 +74,45 @@ export default function ContestsPage({ onSelectContest }) {
   }
 
   async function handleJoin(contestId) {
+    if (!user) { showToast('Please sign in first'); return; }
     const contest = contests.find(c => c.id === contestId);
+    if (!contest) { showToast('Contest not found'); return; }
     try {
-      const result = await callFn.joinContest({ contestId, inviteCode: contest.inviteCode });
+      const lbRef = doc(db, 'contests', contestId, 'leaderboard', user.uid);
+      const existing = await getDoc(lbRef);
+      if (existing.exists()) { showToast('Already joined this contest'); return; }
+      await setDoc(lbRef, {
+        userId: user.uid,
+        displayName: user.displayName || user.email?.split('@')[0] || 'Player',
+        totalScore: 0,
+        rank: 1,
+        joinedAt: serverTimestamp(),
+        breakdown: {},
+        lastUpdated: serverTimestamp(),
+      });
+      await updateDoc(doc(db, 'contests', contestId), {
+        memberCount: increment(1),
+      });
       setJoinedIds(prev => new Set([...prev, contestId]));
-      showToast(`Joined "${result.data.contestName}"!`);
+      showToast('Joined "' + contest.name + '"!');
     } catch (err) {
-      const msg = {
-        'failed-precondition': 'Submit your team for this match first',
-        'already-exists': 'Already joined this contest',
-        'resource-exhausted': 'Contest is full',
-      }[err.code] || err.message;
-      showToast(msg);
+      showToast('Error: ' + err.message);
     }
   }
 
   async function handleJoinByCode() {
+    if (!joinCode.trim()) { showToast('Enter an invite code'); return; }
     const code = joinCode.trim().toUpperCase();
-    const q = query(collection(db, 'contests'), where('inviteCode', '==', code));
-    const snap = await getDocs(q);
-    if (snap.empty) { showToast('No contest found with that code'); return; }
-    const contestId = snap.docs[0].id;
-    await handleJoin(contestId);
-    setJoinCode('');
-  }
-
-  function showToast(msg) {
-    setToast(msg);
-    setTimeout(() => setToast(''), 3000);
+    try {
+      const q = query(collection(db, 'contests'), where('inviteCode', '==', code));
+      const snap = await getDocs(q);
+      if (snap.empty) { showToast('No contest found with that code'); return; }
+      const contestId = snap.docs[0].id;
+      await handleJoin(contestId);
+      setJoinCode('');
+    } catch (err) {
+      showToast('Error: ' + err.message);
+    }
   }
 
   const MATCH_LABELS = {
@@ -119,11 +132,11 @@ export default function ContestsPage({ onSelectContest }) {
   const s = {
     card: { background: '#fff', border: '0.5px solid #e5e5e5', borderRadius: 12, padding: '1rem 1.25rem', marginBottom: '.75rem' },
     cardJoined: { border: '1.5px solid #FF6B00' },
-    btn: { padding: '7px 14px', borderRadius: 8, border: '0.5px solid #e5e5e5', cursor: 'pointer', fontSize: 12, fontWeight: 500, background: '#fff' },
+    btn: { padding: '7px 14px', borderRadius: 8, border: '0.5px solid #e5e5e5', cursor: 'pointer', fontSize: 12, fontWeight: 500, background: '#fff', fontFamily: 'inherit' },
     btnPrimary: { background: '#FF6B00', border: 'none', color: '#fff' },
-    fbtn: { padding: '4px 12px', borderRadius: 12, border: '0.5px solid #e5e5e5', background: 'transparent', cursor: 'pointer', fontSize: 12, color: '#666' },
+    fbtn: { padding: '4px 12px', borderRadius: 12, border: '0.5px solid #e5e5e5', background: 'transparent', cursor: 'pointer', fontSize: 12, color: '#666', fontFamily: 'inherit' },
     fbtnActive: { background: '#f5f4f0', color: '#222', borderColor: '#ccc' },
-    input: { padding: '8px 12px', border: '0.5px solid #ccc', borderRadius: 8, fontSize: 13, width: '100%', boxSizing: 'border-box', marginBottom: 10, outline: 'none' },
+    input: { padding: '8px 12px', border: '0.5px solid #ccc', borderRadius: 8, fontSize: 13, width: '100%', boxSizing: 'border-box', marginBottom: 10, outline: 'none', fontFamily: 'inherit' },
     label: { display: 'block', fontSize: 12, color: '#666', marginBottom: 4 },
     progTrack: { height: 4, borderRadius: 2, background: '#f0f0f0', overflow: 'hidden', margin: '5px 0' },
     progFill: { height: '100%', borderRadius: 2, background: '#FF6B00' },
@@ -148,7 +161,6 @@ export default function ContestsPage({ onSelectContest }) {
         </button>
       </div>
 
-      {/* Create contest form */}
       {showCreate && (
         <div style={{ ...s.card, border: '1.5px solid #FF6B00', marginBottom: '1rem' }}>
           <div style={{ fontSize: 14, fontWeight: 500, marginBottom: '.75rem' }}>Create a private contest</div>
@@ -177,14 +189,13 @@ export default function ContestsPage({ onSelectContest }) {
         </div>
       )}
 
-      {/* Contest list */}
       {loading ? (
         <div style={{ padding: '2rem', textAlign: 'center', color: '#888', fontSize: 13 }}>Loading contests...</div>
       ) : filtered.length === 0 ? (
         <div style={{ padding: '2rem', textAlign: 'center', color: '#888', fontSize: 13 }}>No contests found</div>
       ) : filtered.map(c => {
         const isJoined = joinedIds.has(c.id);
-        const pct = Math.min(100, Math.round((c.memberCount / c.maxParticipants) * 100));
+        const pct = Math.min(100, Math.round(((c.memberCount || 0) / (c.maxParticipants || 10)) * 100));
         return (
           <div key={c.id} style={{ ...s.card, ...(isJoined ? s.cardJoined : {}) }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '.5rem' }}>
@@ -204,11 +215,11 @@ export default function ContestsPage({ onSelectContest }) {
             <div style={s.progTrack}><div style={{ ...s.progFill, width: pct + '%' }} /></div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
               <div style={{ fontSize: 11, color: '#888' }}>
-                {c.memberCount} / {c.maxParticipants?.toLocaleString()} spots
+                {c.memberCount || 0} / {c.maxParticipants?.toLocaleString()} spots
                 &nbsp;·&nbsp; Code: <strong style={{ fontFamily: 'monospace' }}>{c.inviteCode}</strong>
               </div>
               {isJoined ? (
-                <div style={{ display: 'flex', gap: 6 }}>
+                <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                   <span style={{ fontSize: 12, color: '#16a34a', fontWeight: 500 }}>Joined</span>
                   <button style={{ ...s.btn, fontSize: 11 }} onClick={() => onSelectContest(c.id, c.name)}>View leaderboard</button>
                 </div>
@@ -222,7 +233,6 @@ export default function ContestsPage({ onSelectContest }) {
         );
       })}
 
-      {/* Join by code */}
       <div style={{ ...s.card, marginTop: '.5rem' }}>
         <div style={{ fontSize: 13, fontWeight: 500, marginBottom: '.5rem' }}>Have an invite code?</div>
         <div style={{ display: 'flex', gap: 8 }}>
@@ -233,4 +243,3 @@ export default function ContestsPage({ onSelectContest }) {
     </div>
   );
 }
-
