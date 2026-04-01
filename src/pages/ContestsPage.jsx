@@ -83,7 +83,7 @@ export default function ContestsPage({ onSelectContest }) {
         'already-exists': 'Already joined this contest',
         'resource-exhausted': 'Contest is full',
       }[err.code] || err.message;
-      showToast(msg);
+      showToast(msg || 'Error joining contest');
     }
   }
 
@@ -97,7 +97,7 @@ export default function ContestsPage({ onSelectContest }) {
     setJoinCode('');
   }
 
-  function showToast(msg) {
+  function showToast(msg || 'Error joining contest') {
     setToast(msg);
     setTimeout(() => setToast(''), 3000);
   }
@@ -233,5 +233,6 @@ export default function ContestsPage({ onSelectContest }) {
     </div>
   );
 }
+
 
 
