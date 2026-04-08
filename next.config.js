@@ -1,6 +1,6 @@
-/** @type {import('next').NextConfig} */ 
-const nextConfig = { 
-  reactStrictMode: true, 
-  experimental: { serverComponentsExternalPackages: ['firebase-admin'] }, 
-} 
-module.exports = nextConfig 
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  serverExternalPackages: ['firebase-admin'],
+}
+module.exports = nextConfig
