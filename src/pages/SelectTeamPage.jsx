@@ -126,7 +126,7 @@ export default function SelectTeamPage() {
 
   const allMatches = MATCH_OPTIONS;
   const match = allMatches.find(m => m.id === matchId) || allMatches[0];
-  const pool = (match?.teams ?? []).flatMap(t => (SQUADS[t] || []).map(p => ({ ...p, team: t, id: `${t}_${p.n.replace(/\s+/g,'_')}` }))).filter(p => roleFilter === 'ALL' || p.r === roleFilter);
+  const pool = (match?.teams ?? []).flatMap(t => ((squadsLoaded ? squads[t] : SQUADS[t]) || []).map(p => ({ ...p, team: t, id: `${t}_${p.n.replace(/\s+/g,'_')}` }))).filter(p => roleFilter === 'ALL' || p.r === roleFilter);
   const budgetUsed = selected.reduce((s, id) => { const p = pool.find(x => x.id === id); return s + (p?.c || 0); }, 0);
 
   function addPlayer(id) {
