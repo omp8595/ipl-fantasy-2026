@@ -1,4 +1,6 @@
 ﻿import { useState, useEffect } from 'react';
+import { db } from '../lib/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 import { callFn } from '../lib/firebase';
 import { useAuth } from '../hooks/useAuth';
 
@@ -99,6 +101,21 @@ const DEFAULT_MATCH_ID = MATCH_OPTIONS.find(m => m.teams.every(t => SQUADS[t]))?
 
 export default function SelectTeamPage() {
   const { user } = useAuth();
+  const [squads, setSquads] = useState({});
+  const [squadsLoaded, setSquadsLoaded] = useState(false);
+  useEffect(() => {
+    async function fetchSquads() {
+      const teams = ['CSK','MI','RCB','KKR','SRH','DC','RR','GT','LSG','PBKS'];
+      const result = {};
+      await Promise.all(teams.map(async t => {
+        const snap = await getDoc(doc(db, 'squads', t));
+        if (snap.exists()) result[t] = snap.data().players || [];
+      }));
+      setSquads(result);
+      setSquadsLoaded(true);
+    }
+    fetchSquads();
+  }, []);
   const [matchId, setMatchId] = useState(DEFAULT_MATCH_ID);
   const [selected, setSelected] = useState([]);
   const [capId, setCapId] = useState(null);
