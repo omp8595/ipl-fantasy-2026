@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { callFn } from '../lib/firebase';
 import { useAuth } from '../hooks/useAuth';
 
@@ -30,7 +30,7 @@ export default function SelectTeamPage() {
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState('');
 
-  const match = MATCH_OPTIONS.find(m => m.id === matchId);
+  const match = allMatches.find(m => m.id === matchId);
   const pool = match.teams.flatMap(t =>
     (SQUADS[t] || []).map(p => ({ ...p, team: t, id: `${t}_${p.n.replace(/\s+/g,'_')}` }))
   ).filter(p => roleFilter === 'ALL' || p.r === roleFilter);
@@ -88,7 +88,7 @@ export default function SelectTeamPage() {
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: '.75rem', flexWrap: 'wrap' }}>
         <span style={{ fontSize: 13, fontWeight: 500 }}>Match:</span>
         <select style={{ ...s.input, marginBottom: 0 }} value={matchId} onChange={e => { setMatchId(e.target.value); setSelected([]); setCapId(null); setVcId(null); }}>
-          {MATCH_OPTIONS.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
+          {allMatches.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
         </select>
       </div>
 
