@@ -50,7 +50,7 @@ export default function SelectTeamPage() {
 
   const allMatches=apiMatches.length>0?apiMatches:MATCH_OPTIONS; // fallback
   const match=allMatches.find(m => m.id === matchId);
-  const pool = match.teams.flatMap(t =>
+  const pool = (match ? match.teams : []).flatMap(t =>
     (SQUADS[t] || []).map(p => ({ ...p, team: t, id: `${t}_${p.n.replace(/\s+/g,'_')}` }))
   ).filter(p => roleFilter === 'ALL' || p.r === roleFilter);
 
