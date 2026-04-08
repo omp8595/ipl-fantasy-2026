@@ -1,7 +1,7 @@
-export default async function handler(req, res) { 
+﻿export default async function handler(req, res) { 
   try { 
     const apiKey = process.env.CRICKETDATA_API_KEY 
-    const r = await fetch(`https://api.cricketdata.org/api/v1/matches?apikey=${apiKey}&offset=0`) 
+    const r = await fetch(`https://api.cricapi.com/api/v1/matches?apikey=${apiKey}&offset=0`) 
     const data = await r.json() 
     if (!data.data) return res.status(200).json({ matches: [] }) 
     const teams = ['CSK','MI','RCB','KKR','SRH','DC','RR','GT','LSG','PBKS'] 
