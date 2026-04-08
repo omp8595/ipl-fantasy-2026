@@ -41,6 +41,12 @@ const MATCH_OPTIONS = [
   { id: 'MI_RCB_2026_M20', label: 'MI vs RCB - Apr 13', teams: ['MI','RCB'] },
 ];
 
+  { id: 'TBD1_2026_M71', label: 'TBD vs TBD - May 19', teams: ['RCB','MI'] },
+  { id: 'TBD2_2026_M72', label: 'TBD vs TBD - May 20', teams: ['CSK','KKR'] },
+  { id: 'Q1_2026_M77', label: 'Qualifier 1 - May 26', teams: ['CSK','MI'] },
+  { id: 'EL_2026_M78', label: 'Eliminator - May 27', teams: ['RCB','KKR'] },
+  { id: 'Q2_2026_M79', label: 'Qualifier 2 - May 29', teams: ['GT','MI'] },
+  { id: 'FINAL_2026_M80', label: 'FINAL - May 31', teams: ['CSK','RCB'] },
 const DEFAULT_MATCH_ID = MATCH_OPTIONS.find(m => m.teams.every(t => SQUADS[t]))?.id || MATCH_OPTIONS[0].id;
 
 export default function SelectTeamPage() {
