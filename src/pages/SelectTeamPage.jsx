@@ -24,7 +24,7 @@ export default function SelectTeamPage() {
   const [apiMatches,setApiMatches]=useState([]);
   useEffect(()=>{fetch('https://api.cricapi.com/v1/matches?apikey=30dd02c2-f08d-4532-a9a4-09daf3a6766a&offset=0').then(r=>r.json()).then(d=>{if(d.data&&d.data.length>0){const t=['CSK','MI','RCB','KKR','SRH','DC','RR','GT','LSG','PBKS'];const ipl=d.data.filter(m=>m.name&&t.some(x=>m.name.toUpperCase().includes(x)));if(ipl.length>0)setApiMatches(ipl.map(m=>({id:m.id,label:m.name,teams:m.teams||[]})))}}).catch(()=>{});},[]);
   const { user } = useAuth();
-  const [matchId, setMatchId] = useState('CSK_RR_2026_M03');
+  const [matchId, setMatchId] = useState('SRH_RCB_2026_M01');
   const [selected, setSelected] = useState([]);
   const [capId, setCapId] = useState(null);
   const [vcId, setVcId] = useState(null);
@@ -32,7 +32,7 @@ export default function SelectTeamPage() {
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState('');
 
-  const allMatches=apiMatches.length>0?apiMatches:MATCH_OPTIONS;
+  const allMatches=apiMatches.length>0?apiMatches:MATCH_OPTIONS; // fallback
   const match=allMatches.find(m => m.id === matchId);
   const pool = match.teams.flatMap(t =>
     (SQUADS[t] || []).map(p => ({ ...p, team: t, id: `${t}_${p.n.replace(/\s+/g,'_')}` }))
