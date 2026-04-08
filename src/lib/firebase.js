@@ -1,6 +1,7 @@
 import { initializeApp, getApps } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
+import { getFunctions, httpsCallable } from 'firebase/functions'
 
 const firebaseConfig = {
   apiKey:            process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -11,10 +12,12 @@ const firebaseConfig = {
   appId:             process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 }
 
-// Prevent re-initialization in Next.js hot reload
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]
 
 export const auth = getAuth(app)
-export const db   = getFirestore(app)
+export const db = getFirestore(app)
+export const functions = getFunctions(app)
+export const callFn = {
+  submitTeam: (data) => httpsCallable(functions, 'submitTeam')(data)
+}
 export default app
-
