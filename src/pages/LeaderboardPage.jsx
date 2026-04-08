@@ -17,8 +17,8 @@ export default function LeaderboardPage({ contestId, contestName }) {
     rowYou: { background: '#fff8f5' },
     rank: { fontSize: 13, fontWeight: 500, width: 24, color: '#888' },
     rankTop: { color: '#FF6B00' },
-    overlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.4)', zIndex: 100, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' },
-    modal: { background: '#fff', borderRadius: '16px 16px 0 0', width: '100%', maxWidth: 600, maxHeight: '80vh', overflowY: 'auto', padding: '1.25rem' },
+    overlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' },
+    modal: { background: '#fff', borderRadius: 16, width: '100%', maxWidth: 600, maxHeight: '85vh', overflowY: 'auto', padding: '1.25rem' },
   };
   if (!contestId) return <div style={{ padding: '2rem', textAlign: 'center', color: '#888', fontSize: 13 }}>Select a contest from the Contests tab</div>;
   return (
