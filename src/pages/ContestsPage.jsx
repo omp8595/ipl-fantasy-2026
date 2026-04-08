@@ -115,13 +115,10 @@ export default function ContestsPage({ onSelectContest }) {
     }
   }
 
-  const MATCH_LABELS = {
-    'CSK_RR_2026_M03': 'CSK vs RR',
-    'GT_PBKS_2026_M04': 'GT vs PBKS',
-    'LSG_DC_2026_M05': 'LSG vs DC',
-    'KKR_SRH_2026_M06': 'KKR vs SRH',
-    'MI_DC_2026_M08': 'MI vs DC',
-  };
+  const MATCH_OPTIONS = [
+    {id:'SRH_RCB_2026_M01',label:'SRH vs RCB - Mar 28'},{id:'KKR_MI_2026_M02',label:'KKR vs MI - Mar 29'},{id:'CSK_RR_2026_M03',label:'CSK vs RR - Mar 30'},{id:'GT_PBKS_2026_M04',label:'GT vs PBKS - Mar 30'},{id:'LSG_DC_2026_M05',label:'LSG vs DC - Apr 1'},{id:'SRH_KKR_2026_M06',label:'SRH vs KKR - Apr 1'},{id:'CSK_PBKS_2026_M07',label:'CSK vs PBKS - Apr 2'},{id:'MI_DC_2026_M08',label:'MI vs DC - Apr 3'},{id:'RR_GT_2026_M09',label:'RR vs GT - Apr 4'},{id:'SRH_LSG_2026_M10',label:'SRH vs LSG - Apr 5'},{id:'RCB_CSK_2026_M11',label:'RCB vs CSK - Apr 5'},{id:'KKR_PBKS_2026_M12',label:'KKR vs PBKS - Apr 6'},{id:'RR_MI_2026_M13',label:'RR vs MI - Apr 7'},{id:'DC_GT_2026_M14',label:'DC vs GT - Apr 8'},{id:'KKR_LSG_2026_M15',label:'KKR vs LSG - Apr 9'},{id:'RR_RCB_2026_M16',label:'RR vs RCB - Apr 10'},{id:'PBKS_SRH_2026_M17',label:'PBKS vs SRH - Apr 11'},{id:'CSK_DC_2026_M18',label:'CSK vs DC - Apr 12'},{id:'LSG_GT_2026_M19',label:'LSG vs GT - Apr 12'},{id:'MI_RCB_2026_M20',label:'MI vs RCB - Apr 13'},{id:'SRH_RR_2026_M21',label:'SRH vs RR - Apr 14'},{id:'CSK_KKR_2026_M22',label:'CSK vs KKR - Apr 15'},{id:'RCB_LSG_2026_M23',label:'RCB vs LSG - Apr 16'},{id:'MI_PBKS_2026_M24',label:'MI vs PBKS - Apr 16'},{id:'GT_KKR_2026_M25',label:'GT vs KKR - Apr 17'},{id:'RCB_DC_2026_M26',label:'RCB vs DC - Apr 18'},{id:'SRH_CSK_2026_M27',label:'SRH vs CSK - Apr 19'},{id:'KKR_RR_2026_M28',label:'KKR vs RR - Apr 19'},{id:'PBKS_LSG_2026_M29',label:'PBKS vs LSG - Apr 20'},{id:'GT_MI_2026_M30',label:'GT vs MI - Apr 20'},{id:'SRH_DC_2026_M31',label:'SRH vs DC - Apr 21'},{id:'LSG_RR_2026_M32',label:'LSG vs RR - Apr 22'},{id:'MI_CSK_2026_M33',label:'MI vs CSK - Apr 23'},{id:'RCB_GT_2026_M34',label:'RCB vs GT - Apr 23'},{id:'DC_PBKS_2026_M35',label:'DC vs PBKS - Apr 24'},{id:'RR_SRH_2026_M36',label:'RR vs SRH - Apr 25'},{id:'GT_CSK_2026_M37',label:'GT vs CSK - Apr 26'},{id:'LSG_KKR_2026_M38',label:'LSG vs KKR - Apr 26'},{id:'DC_RCB_2026_M39',label:'DC vs RCB - Apr 27'},{id:'PBKS_RR_2026_M40',label:'PBKS vs RR - Apr 27'},{id:'MI_SRH_2026_M41',label:'MI vs SRH - Apr 28'},{id:'GT_RCB_2026_M42',label:'GT vs RCB - Apr 29'},{id:'RR_DC_2026_M43',label:'RR vs DC - Apr 29'},{id:'CSK_LSG_2026_M44',label:'CSK vs LSG - Apr 30'},{id:'KKR_SRH_2026_M45',label:'KKR vs SRH - Apr 30'},{id:'PBKS_GT_2026_M46',label:'PBKS vs GT - May 1'},{id:'DC_MI_2026_M47',label:'DC vs MI - May 2'},{id:'RR_CSK_2026_M48',label:'RR vs CSK - May 3'},{id:'LSG_SRH_2026_M49',label:'LSG vs SRH - May 3'},{id:'KKR_GT_2026_M50',label:'KKR vs GT - May 4'},{id:'RCB_PBKS_2026_M51',label:'RCB vs PBKS - May 4'},{id:'MI_RR_2026_M52',label:'MI vs RR - May 5'},{id:'DC_CSK_2026_M53',label:'DC vs CSK - May 6'},{id:'SRH_GT_2026_M54',label:'SRH vs GT - May 6'},{id:'LSG_PBKS_2026_M55',label:'LSG vs PBKS - May 7'},{id:'KKR_DC_2026_M56',label:'KKR vs DC - May 8'},{id:'RCB_RR_2026_M57',label:'RCB vs RR - May 8'},{id:'GT_LSG_2026_M58',label:'GT vs LSG - May 9'},{id:'MI_KKR_2026_M59',label:'MI vs KKR - May 10'},{id:'CSK_SRH_2026_M60',label:'CSK vs SRH - May 10'},{id:'PBKS_DC_2026_M61',label:'PBKS vs DC - May 11'},{id:'RR_LSG_2026_M62',label:'RR vs LSG - May 11'},{id:'GT_SRH_2026_M63',label:'GT vs SRH - May 12'},{id:'RCB_MI_2026_M64',label:'RCB vs MI - May 13'},{id:'CSK_GT_2026_M65',label:'CSK vs GT - May 14'},{id:'KKR_RCB_2026_M66',label:'KKR vs RCB - May 15'},{id:'DC_RR_2026_M67',label:'DC vs RR - May 16'},{id:'SRH_PBKS_2026_M68',label:'SRH vs PBKS - May 17'},{id:'MI_LSG_2026_M69',label:'MI vs LSG - May 17'},{id:'CSK_MI_2026_M70',label:'CSK vs MI - May 18'},{id:'Q1_2026_M71',label:'Qualifier 1 - May 26'},{id:'EL_2026_M72',label:'Eliminator - May 27'},{id:'Q2_2026_M73',label:'Qualifier 2 - May 29'},{id:'FINAL_2026_M74',label:'FINAL - May 31'}
+  ];
+  const MATCH_LABELS = Object.fromEntries(MATCH_OPTIONS.map(m=>([m.id,m.label])));
 
   const filtered = contests.filter(c => {
     if (filter === 'joined') return joinedIds.has(c.id);
@@ -168,8 +165,8 @@ export default function ContestsPage({ onSelectContest }) {
           <input style={s.input} placeholder="e.g. Office Fantasy League" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
           <label style={s.label}>Match</label>
           <select style={{ ...s.input }} value={form.matchId} onChange={e => setForm(f => ({ ...f, matchId: e.target.value }))}>
-            {Object.entries(MATCH_LABELS).map(([id, label]) => (
-              <option key={id} value={id}>{label}</option>
+            {MATCH_OPTIONS.map(m => (
+              <option key={m.id} value={m.id}>{m.label}</option>
             ))}
           </select>
           <label style={s.label}>Max participants</label>
