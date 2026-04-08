@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { callFn } from '../lib/firebase';
 import { useAuth } from '../hooks/useAuth';
 
@@ -11,6 +11,12 @@ const SQUADS = {
   GT:[{n:'Shubman Gill',r:'BAT',c:10.0},{n:'Rashid Khan',r:'AR',c:10.0},{n:'Jos Buttler',r:'WK',c:9.5},{n:'Kagiso Rabada',r:'BOWL',c:9.5},{n:'Mohammed Siraj',r:'BOWL',c:8.5},{n:'Sai Sudharsan',r:'BAT',c:8.5},{n:'Washington Sundar',r:'AR',c:8.0},{n:'Glenn Phillips',r:'BAT',c:7.5},{n:'Jason Holder',r:'AR',c:7.5},{n:'Prasidh Krishna',r:'BOWL',c:7.5},{n:'Rahul Tewatia',r:'AR',c:7.5},{n:'Kumar Kushagra',r:'WK',c:6.0}],
   MI:[{n:'Rohit Sharma',r:'BAT',c:10.0},{n:'Jasprit Bumrah',r:'BOWL',c:10.5},{n:'Suryakumar Yadav',r:'BAT',c:10.0},{n:'Hardik Pandya',r:'AR',c:10.0},{n:'Tilak Varma',r:'BAT',c:8.5},{n:'Ryan Rickelton',r:'WK',c:7.5},{n:'Trent Boult',r:'BOWL',c:8.5},{n:'Will Jacks',r:'AR',c:8.0},{n:'Mitchell Santner',r:'AR',c:7.5},{n:'Deepak Chahar',r:'BOWL',c:7.5},{n:'Naman Dhir',r:'AR',c:6.5},{n:'Robin Minz',r:'WK',c:5.5}],
   LSG:[{n:'Rishabh Pant',r:'WK',c:10.5},{n:'Mohammad Shami',r:'BOWL',c:9.5},{n:'Mitchell Marsh',r:'AR',c:9.0},{n:'Nicholas Pooran',r:'WK',c:8.5},{n:'Wanindu Hasaranga',r:'AR',c:8.5},{n:'Anrich Nortje',r:'BOWL',c:8.5},{n:'Aiden Markram',r:'AR',c:8.0},{n:'Mayank Yadav',r:'BOWL',c:8.0},{n:'Josh Inglis',r:'WK',c:7.5},{n:'Avesh Khan',r:'BOWL',c:7.5},{n:'Abdul Samad',r:'AR',c:7.0},{n:'Ayush Badoni',r:'AR',c:7.0}],
+  // Placeholder squads for teams not yet defined — prevents crash on team selection
+  SRH:[{n:'Heinrich Klaasen',r:'WK',c:9.5},{n:'Travis Head',r:'BAT',c:10.0},{n:'Pat Cummins',r:'AR',c:10.0},{n:'Abhishek Sharma',r:'BAT',c:8.5},{n:'Nitish Kumar Reddy',r:'AR',c:8.0},{n:'Harshal Patel',r:'BOWL',c:7.5},{n:'Jaydev Unadkat',r:'BOWL',c:7.0},{n:'Aiden Markram',r:'AR',c:8.0},{n:'Bhuvneshwar Kumar',r:'BOWL',c:7.5},{n:'Glenn Maxwell',r:'AR',c:8.5},{n:'Adam Zampa',r:'BOWL',c:7.0},{n:'Ishan Kishan',r:'WK',c:8.0}],
+  RCB:[{n:'Virat Kohli',r:'BAT',c:11.0},{n:'Phil Salt',r:'WK',c:9.0},{n:'Rajat Patidar',r:'BAT',c:8.5},{n:'Liam Livingstone',r:'AR',c:8.5},{n:'Krunal Pandya',r:'AR',c:8.0},{n:'Yash Dayal',r:'BOWL',c:7.5},{n:'Josh Hazlewood',r:'BOWL',c:9.0},{n:'Swapnil Singh',r:'AR',c:7.0},{n:'Manoj Bhandage',r:'AR',c:6.5},{n:'Tim David',r:'BAT',c:8.0},{n:'Jacob Bethell',r:'AR',c:7.5},{n:'Suyash Sharma',r:'BOWL',c:7.0}],
+  KKR:[{n:'Venkatesh Iyer',r:'AR',c:9.0},{n:'Quinton de Kock',r:'WK',c:9.5},{n:'Varun Chakaravarthy',r:'BOWL',c:9.0},{n:'Andre Russell',r:'AR',c:10.0},{n:'Sunil Narine',r:'AR',c:9.5},{n:'Harshit Rana',r:'BOWL',c:8.0},{n:'Angkrish Raghuvanshi',r:'BAT',c:7.5},{n:'Manish Pandey',r:'BAT',c:7.0},{n:'Spencer Johnson',r:'BOWL',c:7.5},{n:'Rovman Powell',r:'BAT',c:8.0},{n:'Anukul Roy',r:'AR',c:6.5},{n:'Ramandeep Singh',r:'AR',c:7.0}],
+  DC:[{n:'KL Rahul',r:'WK',c:10.0},{n:'Axar Patel',r:'AR',c:9.5},{n:'Jake Fraser-McGurk',r:'BAT',c:9.0},{n:'Tristan Stubbs',r:'BAT',c:8.5},{n:'Kuldeep Yadav',r:'BOWL',c:9.0},{n:'Mitchell Starc',r:'BOWL',c:9.5},{n:'Faf du Plessis',r:'BAT',c:8.5},{n:'Ashutosh Sharma',r:'AR',c:7.5},{n:'Mukesh Kumar',r:'BOWL',c:7.5},{n:'Darshan Nalkande',r:'BOWL',c:7.0},{n:'Karun Nair',r:'BAT',c:7.5},{n:'Sameer Rizvi',r:'BAT',c:7.0}],
+  PBKS:[{n:'Shreyas Iyer',r:'BAT',c:9.5},{n:'Arshdeep Singh',r:'BOWL',c:9.5},{n:'Marcus Stoinis',r:'AR',c:9.0},{n:'Glenn Maxwell',r:'AR',c:8.5},{n:'Shashank Singh',r:'BAT',c:8.0},{n:'Azmatullah Omarzai',r:'AR',c:7.5},{n:'Harshal Patel',r:'BOWL',c:7.5},{n:'Prabhsimran Singh',r:'WK',c:8.0},{n:'Josh Inglis',r:'WK',c:7.5},{n:'Lockie Ferguson',r:'BOWL',c:8.0},{n:'Nehal Wadhera',r:'BAT',c:7.0},{n:'Harpreet Brar',r:'AR',c:7.0}],
 };
 
 const MATCH_OPTIONS = [
@@ -36,11 +42,14 @@ const MATCH_OPTIONS = [
   { id: 'MI_RCB_2026_M20', label: 'MI vs RCB - Apr 13', teams: ['MI','RCB'] },
 ];
 
+// FIX: Default to first match that has squad data for both teams
+const DEFAULT_MATCH_ID = MATCH_OPTIONS.find(m => m.teams.every(t => SQUADS[t]))?.id || MATCH_OPTIONS[0].id;
+
 export default function SelectTeamPage() {
   const [apiMatches,setApiMatches]=useState([]);
   useEffect(()=>{fetch('https://api.cricapi.com/v1/matches?apikey=30dd02c2-f08d-4532-a9a4-09daf3a6766a&offset=0').then(r=>r.json()).then(d=>{if(d.data&&d.data.length>0){const t=['CSK','MI','RCB','KKR','SRH','DC','RR','GT','LSG','PBKS'];const ipl=d.data.filter(m=>m.name&&t.some(x=>m.name.toUpperCase().includes(x)));if(ipl.length>0)setApiMatches(ipl.map(m=>({id:m.id,label:m.name,teams:m.teams||[]})))}}).catch(()=>{});},[]);
   const { user } = useAuth();
-  const [matchId, setMatchId] = useState('SRH_RCB_2026_M01');
+  const [matchId, setMatchId] = useState(DEFAULT_MATCH_ID); // FIX: use safe default
   const [selected, setSelected] = useState([]);
   const [capId, setCapId] = useState(null);
   const [vcId, setVcId] = useState(null);
@@ -48,9 +57,11 @@ export default function SelectTeamPage() {
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState('');
 
-  const allMatches=apiMatches.length>0?apiMatches:MATCH_OPTIONS; // fallback
-  const match=allMatches.find(m => m.id === matchId);
-  const pool = (match ? match.teams : []).flatMap(t =>
+  const allMatches = MATCH_OPTIONS;
+  // FIX: always fallback to first match — never let match be undefined
+  const match = allMatches.find(m => m.id === matchId) || allMatches[0];
+
+  const pool = (match?.teams ?? []).flatMap(t =>
     (SQUADS[t] || []).map(p => ({ ...p, team: t, id: `${t}_${p.n.replace(/\s+/g,'_')}` }))
   ).filter(p => roleFilter === 'ALL' || p.r === roleFilter);
 
@@ -122,7 +133,7 @@ export default function SelectTeamPage() {
             <div style={{ height: '100%', borderRadius: 2, background: pct > 90 ? '#ef4444' : pct > 75 ? '#f59e0b' : '#FF6B00', width: pct + '%', transition: 'width .3s' }} />
           </div>
           <div style={{ fontSize: 11, color: '#888', marginBottom: '.75rem' }}>
-            {selected.length}/11 Â· {capId && vcId ? <span style={{ color: '#16a34a' }}>C & VC set âœ“</span> : 'C & VC not set'}
+            {selected.length}/11 · {capId && vcId ? <span style={{ color: '#16a34a' }}>C & VC set ✓</span> : 'C & VC not set'}
           </div>
 
           {/* Slot grid */}
@@ -140,7 +151,7 @@ export default function SelectTeamPage() {
                     <>
                       <div style={{ fontSize: 9, color: TEAM_COLORS[team] || '#888' }}>{team}</div>
                       <div style={{ fontSize: 10, fontWeight: 500 }}>{name.split(' ').slice(-1)[0]}</div>
-                      <button onClick={() => removePlayer(pid)} style={{ position: 'absolute', top: -5, left: -5, width: 13, height: 13, borderRadius: '50%', background: '#fef2f2', border: 'none', cursor: 'pointer', fontSize: 9, color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}>Ã—</button>
+                      <button onClick={() => removePlayer(pid)} style={{ position: 'absolute', top: -5, left: -5, width: 13, height: 13, borderRadius: '50%', background: '#fef2f2', border: 'none', cursor: 'pointer', fontSize: 9, color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}>×</button>
                     </>
                   ) : <span style={{ fontSize: 10, color: '#ccc' }}>Empty</span>}
                 </div>
@@ -159,7 +170,8 @@ export default function SelectTeamPage() {
         {/* Right: player list */}
         <div style={s.card}>
           <div style={{ fontSize: 12, fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: '.5rem' }}>
-            {match.teams.join(' & ')} players
+            {/* FIX: safe access with optional chaining */}
+            {match?.teams?.join(' & ') || 'Select a match'} players
           </div>
           <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginBottom: '.75rem' }}>
             {['ALL', 'BAT', 'BOWL', 'AR', 'WK'].map(f => (
@@ -167,7 +179,11 @@ export default function SelectTeamPage() {
             ))}
           </div>
           <div style={{ maxHeight: 400, overflowY: 'auto' }}>
-            {pool.map(p => {
+            {pool.length === 0 ? (
+              <div style={{ color: '#888', fontSize: 13, textAlign: 'center', padding: '2rem' }}>
+                No players available for this match yet.
+              </div>
+            ) : pool.map(p => {
               const isSel = selected.includes(p.id);
               const over = !isSel && budgetUsed + p.c > BUDGET;
               const full = !isSel && selected.length >= 11;
@@ -181,7 +197,7 @@ export default function SelectTeamPage() {
                   <div style={{ width: 34, height: 34, borderRadius: '50%', background: col + '22', color: col, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 500, flexShrink: 0 }}>{ini}</div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.n}</div>
-                    <div style={{ fontSize: 10, color: '#888' }}><span style={{ color: col, fontWeight: 500 }}>{p.team}</span> Â· {p.r}</div>
+                    <div style={{ fontSize: 10, color: '#888' }}><span style={{ color: col, fontWeight: 500 }}>{p.team}</span> · {p.r}</div>
                   </div>
                   <div style={{ textAlign: 'right', flexShrink: 0 }}>
                     <div style={{ fontSize: 13, fontWeight: 500 }}>{p.c} pts</div>
@@ -203,4 +219,3 @@ export default function SelectTeamPage() {
     </div>
   );
 }
-
