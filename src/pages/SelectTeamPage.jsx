@@ -14,10 +14,26 @@ const SQUADS = {
 };
 
 const MATCH_OPTIONS = [
-  { id: 'CSK_RR_2026_M03', label: 'CSK vs RR â€” Mar 30 (Live)', teams: ['CSK', 'RR'] },
-  { id: 'GT_PBKS_2026_M04', label: 'GT vs PBKS â€” Mar 30', teams: ['GT', 'PBKS'] },
-  { id: 'LSG_DC_2026_M05', label: 'LSG vs DC â€” Apr 1', teams: ['LSG', 'DC'] },
-  { id: 'MI_DC_2026_M08',  label: 'MI vs DC â€” Apr 4',  teams: ['MI', 'DC'] },
+  { id: 'SRH_RCB_2026_M01', label: 'SRH vs RCB - Mar 28', teams: ['SRH','RCB'] },
+  { id: 'KKR_MI_2026_M02', label: 'KKR vs MI - Mar 29', teams: ['KKR','MI'] },
+  { id: 'CSK_RR_2026_M03', label: 'CSK vs RR - Mar 30', teams: ['CSK','RR'] },
+  { id: 'GT_PBKS_2026_M04', label: 'GT vs PBKS - Mar 30', teams: ['GT','PBKS'] },
+  { id: 'LSG_DC_2026_M05', label: 'LSG vs DC - Apr 1', teams: ['LSG','DC'] },
+  { id: 'SRH_KKR_2026_M06', label: 'SRH vs KKR - Apr 1', teams: ['SRH','KKR'] },
+  { id: 'CSK_PBKS_2026_M07', label: 'CSK vs PBKS - Apr 2', teams: ['CSK','PBKS'] },
+  { id: 'MI_DC_2026_M08', label: 'MI vs DC - Apr 3', teams: ['MI','DC'] },
+  { id: 'RR_GT_2026_M09', label: 'RR vs GT - Apr 4', teams: ['RR','GT'] },
+  { id: 'SRH_LSG_2026_M10', label: 'SRH vs LSG - Apr 5', teams: ['SRH','LSG'] },
+  { id: 'RCB_CSK_2026_M11', label: 'RCB vs CSK - Apr 5', teams: ['RCB','CSK'] },
+  { id: 'KKR_PBKS_2026_M12', label: 'KKR vs PBKS - Apr 6', teams: ['KKR','PBKS'] },
+  { id: 'RR_MI_2026_M13', label: 'RR vs MI - Apr 7', teams: ['RR','MI'] },
+  { id: 'DC_GT_2026_M14', label: 'DC vs GT - Apr 8', teams: ['DC','GT'] },
+  { id: 'KKR_LSG_2026_M15', label: 'KKR vs LSG - Apr 9', teams: ['KKR','LSG'] },
+  { id: 'RR_RCB_2026_M16', label: 'RR vs RCB - Apr 10', teams: ['RR','RCB'] },
+  { id: 'PBKS_SRH_2026_M17', label: 'PBKS vs SRH - Apr 11', teams: ['PBKS','SRH'] },
+  { id: 'CSK_DC_2026_M18', label: 'CSK vs DC - Apr 12', teams: ['CSK','DC'] },
+  { id: 'LSG_GT_2026_M19', label: 'LSG vs GT - Apr 12', teams: ['LSG','GT'] },
+  { id: 'MI_RCB_2026_M20', label: 'MI vs RCB - Apr 13', teams: ['MI','RCB'] },
 ];
 
 export default function SelectTeamPage() {
