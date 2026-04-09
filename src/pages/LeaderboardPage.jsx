@@ -1,16 +1,36 @@
 import { useState } from 'react';
-import { db } from '../lib/firebase';
-import { doc, getDoc } from 'firebase/firestore';
 import { useLeaderboard } from '../hooks/useRealtimeData';
 import { useAuth } from '../hooks/useAuth';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 
 export default function LeaderboardPage({ contestId, contestName }) {
   const { user } = useAuth();
   const { entries, loading } = useLeaderboard(contestId);
-  const [sel, setSel] = useState(null);
-  const [teamPlayers, setTeamPlayers] = useState([]);
-  const [loadingPlayers, setLoadingPlayers] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [teamData, setTeamData] = useState(null);
+  const [loadingTeam, setLoadingTeam] = useState(false);
+
+  async function viewTeam(entry) {
+    setSelectedUser(entry);
+    setTeamData(null);
+    setLoadingTeam(true);
+    try {
+      // Try to get submitted team from Firestore
+      const snap = await getDoc(doc(db, 'teams', entry.userId));
+      if (snap.exists()) {
+        setTeamData(snap.data());
+      } else {
+        setTeamData({ players: entry.breakdown || {}, notFound: true });
+      }
+    } catch (e) {
+      setTeamData({ error: true });
+    }
+    setLoadingTeam(false);
+  }
+
   const myEntry = entries.find(e => e.userId === user?.uid);
+
   const s = {
     card: { background: '#fff', border: '0.5px solid #e5e5e5', borderRadius: 12, padding: '1rem 1.25rem', marginBottom: '1rem' },
     mc: { background: '#f5f4f0', borderRadius: 8, padding: '.875rem', textAlign: 'center' },
@@ -21,64 +41,131 @@ export default function LeaderboardPage({ contestId, contestName }) {
     rowYou: { background: '#fff8f5' },
     rank: { fontSize: 13, fontWeight: 500, width: 24, color: '#888' },
     rankTop: { color: '#FF6B00' },
-    overlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' },
-    modal: { background: '#fff', borderRadius: 16, width: '100%', maxWidth: 600, maxHeight: '85vh', overflowY: 'auto', padding: '1.25rem' },
+    liveDot: { width: 6, height: 6, borderRadius: '50%', background: '#22c55e', display: 'inline-block', marginRight: 4, animation: 'blink 1.4s infinite' },
+    overlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.4)', zIndex: 100, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' },
+    modal: { background: '#fff', borderRadius: '16px 16px 0 0', width: '100%', maxWidth: 600, maxHeight: '80vh', overflowY: 'auto', padding: '1.25rem' },
   };
-  if (!contestId) return <div style={{ padding: '2rem', textAlign: 'center', color: '#888', fontSize: 13 }}>Select a contest from the Contests tab</div>;
+
+  if (!contestId) return (
+    <div style={{ padding: '2rem', textAlign: 'center', color: '#888', fontSize: 13 }}>
+      Select a contest from the Contests tab to see the leaderboard
+    </div>
+  );
+
   return (
     <div>
       <style>{`@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}`}</style>
+
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '1rem' }}>
         <div style={{ fontSize: 15, fontWeight: 500 }}>{contestName}</div>
-        <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 10, background: '#dcfce7', color: '#166534', fontWeight: 500 }}>Live</span>
+        <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 10, background: '#dcfce7', color: '#166534', fontWeight: 500 }}>
+          <span style={s.liveDot}></span>Live
+        </span>
       </div>
+
       <div style={s.grid}>
-        <div style={s.mc}><div style={s.mcLabel}>Your rank</div><div style={s.mcVal}>{myEntry ? `#${myEntry.rank}` : '#-'}</div><div style={{ fontSize: 11, color: '#888' }}>of {entries.length}</div></div>
-        <div style={s.mc}><div style={s.mcLabel}>Your score</div><div style={s.mcVal}>{myEntry?.totalScore || 0}</div><div style={{ fontSize: 11, color: '#888' }}>pts</div></div>
-        <div style={s.mc}><div style={s.mcLabel}>Leader</div><div style={{ fontSize: 15, fontWeight: 500, paddingTop: 4 }}>{entries[0]?.displayName || '-'}</div><div style={{ fontSize: 11, color: '#888' }}>{entries[0]?.totalScore || 0} pts</div></div>
+        <div style={s.mc}>
+          <div style={s.mcLabel}>Your rank</div>
+          <div style={{ ...s.mcVal, color: myEntry?.rank === 1 ? '#FF6B00' : undefined }}>
+            {myEntry ? `#${myEntry.rank}` : '#—'}
+          </div>
+          <div style={{ fontSize: 11, color: '#888' }}>of {entries.length}</div>
+        </div>
+        <div style={s.mc}>
+          <div style={s.mcLabel}>Your score</div>
+          <div style={s.mcVal}>{myEntry?.totalScore || 0}</div>
+          <div style={{ fontSize: 11, color: '#888' }}>pts</div>
+        </div>
+        <div style={s.mc}>
+          <div style={s.mcLabel}>Leader</div>
+          <div style={{ fontSize: 15, fontWeight: 500, paddingTop: 4 }}>
+            {entries[0]?.displayName || '—'}
+          </div>
+          <div style={{ fontSize: 11, color: '#888' }}>{entries[0]?.totalScore || 0} pts</div>
+        </div>
       </div>
+
       <div style={s.card}>
-        <div style={{ fontSize: 12, fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: '.75rem' }}>Live standings - tap name to view team</div>
-        {loading ? <div style={{ padding: '1.5rem', textAlign: 'center', color: '#888', fontSize: 13 }}>Loading...</div>
-        : entries.length === 0 ? <div style={{ padding: '1.5rem', textAlign: 'center', color: '#888', fontSize: 13 }}>No participants yet</div>
-        : entries.map((entry, idx) => {
+        <div style={{ fontSize: 12, fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: '.75rem' }}>
+          Live standings · tap a name to see their team
+        </div>
+        {loading ? (
+          <div style={{ padding: '1.5rem', textAlign: 'center', color: '#888', fontSize: 13 }}>Loading...</div>
+        ) : entries.length === 0 ? (
+          <div style={{ padding: '1.5rem', textAlign: 'center', color: '#888', fontSize: 13 }}>No participants yet</div>
+        ) : entries.map((entry, idx) => {
           const isYou = entry.userId === user?.uid;
           return (
-            <div key={entry.userId} style={{ ...s.row, ...(isYou ? s.rowYou : {}) }} onClick={() => setSel(entry)}>
+            <div key={entry.userId}
+              style={{ ...s.row, ...(isYou ? s.rowYou : {}), ':hover': { background: '#f9f9f9' } }}
+              onClick={() => viewTeam(entry)}>
               <div style={{ ...s.rank, ...(idx < 3 ? s.rankTop : {}) }}>#{idx + 1}</div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 13, fontWeight: 500, color: isYou ? '#FF6B00' : undefined }}>{isYou ? '★ ' : ''}{entry.displayName} <span style={{ fontSize: 10, color: '#aaa' }}>→</span></div>
+                <div style={{ fontSize: 13, fontWeight: 500, color: isYou ? '#FF6B00' : undefined }}>
+                  {isYou ? '★ ' : ''}{entry.displayName}
+                  <span style={{ fontSize: 10, color: '#aaa', marginLeft: 6 }}>tap to view team →</span>
+                </div>
+                {entry.lastUpdated && (
+                  <div style={{ fontSize: 10, color: '#aaa' }}>
+                    Updated {new Date(entry.lastUpdated?.toDate?.() || entry.lastUpdated).toLocaleTimeString()}
+                  </div>
+                )}
               </div>
-              <div style={{ textAlign: 'right' }}><div style={{ fontSize: 14, fontWeight: 500 }}>{entry.totalScore}</div><div style={{ fontSize: 10, color: '#888' }}>pts</div></div>
+              {idx < 3 && (
+                <div style={{ fontSize: 11, padding: '1px 7px', borderRadius: 10, background: '#dcfce7', color: '#166534', marginRight: 8 }}>
+                  Top {idx + 1}
+                </div>
+              )}
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: 14, fontWeight: 500 }}>{entry.totalScore}</div>
+                <div style={{ fontSize: 10, color: '#888' }}>pts</div>
+              </div>
             </div>
           );
         })}
       </div>
-      {sel && (
-        <div style={s.overlay} onClick={() => setSel(null)}>
+
+      {/* Team View Modal */}
+      {selectedUser && (
+        <div style={s.overlay} onClick={() => setSelectedUser(null)}>
           <div style={s.modal} onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <div><div style={{ fontSize: 15, fontWeight: 500 }}>{sel.displayName}'s Team</div><div style={{ fontSize: 12, color: '#888' }}>Score: {sel.totalScore} pts</div></div>
-              <button onClick={() => setSel(null)} style={{ border: 'none', background: '#f0f0f0', borderRadius: 8, padding: '6px 12px', cursor: 'pointer' }}>Close</button>
-            </div>
-            {sel.breakdown && Object.keys(sel.breakdown).length > 0 ? (
               <div>
-                {Object.entries(sel.breakdown).map(([pid, data]) => (
-                  <div key={pid} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '0.5px solid #f0f0f0', fontSize: 13 }}>
+                <div style={{ fontSize: 15, fontWeight: 500 }}>{selectedUser.displayName}'s Team</div>
+                <div style={{ fontSize: 12, color: '#888' }}>Score: {selectedUser.totalScore} pts · Rank #{selectedUser.rank}</div>
+              </div>
+              <button onClick={() => setSelectedUser(null)} style={{ border: 'none', background: '#f0f0f0', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontSize: 13 }}>Close</button>
+            </div>
+
+            {loadingTeam ? (
+              <div style={{ padding: '2rem', textAlign: 'center', color: '#888' }}>Loading team...</div>
+            ) : teamData?.error ? (
+              <div style={{ padding: '2rem', textAlign: 'center', color: '#888' }}>Team not available</div>
+            ) : selectedUser.breakdown && Object.keys(selectedUser.breakdown).length > 0 ? (
+              <div>
+                <div style={{ fontSize: 12, color: '#888', marginBottom: 8 }}>Player breakdown</div>
+                {Object.entries(selectedUser.breakdown).map(([playerId, data]) => (
+                  <div key={playerId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '0.5px solid #f0f0f0', fontSize: 13 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <span style={{ fontWeight: 500 }}>{pid.split('_').slice(1).join(' ')}</span>
+                      <span style={{ fontWeight: 500 }}>{playerId.split('_').slice(1).join(' ')}</span>
                       {data.role === 'captain' && <span style={{ fontSize: 9, padding: '1px 5px', background: '#FF6B00', color: '#fff', borderRadius: 8 }}>C</span>}
                       {data.role === 'viceCaptain' && <span style={{ fontSize: 9, padding: '1px 5px', background: '#1d4ed8', color: '#fff', borderRadius: 8 }}>VC</span>}
-                      <span style={{ fontSize: 10, color: '#888' }}>{pid.split('_')[0]}</span>
+                      {data.isMoTM && <span style={{ fontSize: 9, padding: '1px 5px', background: '#fef9c3', color: '#854d0e', borderRadius: 8 }}>MoTM</span>}
+                      <span style={{ fontSize: 10, color: '#888' }}>{playerId.split('_')[0]}</span>
                     </div>
-                    <span style={{ fontWeight: 500 }}>{data.finalPts || 0} pts</span>
+                    <div style={{ fontWeight: 500, color: data.finalPts > 0 ? '#16a34a' : '#888' }}>{data.finalPts || 0} pts</div>
                   </div>
                 ))}
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', fontWeight: 600, fontSize: 14, borderTop: '1px solid #eee', marginTop: 4 }}>
-                  <span>Total</span><span style={{ color: '#FF6B00' }}>{sel.totalScore} pts</span>
+                  <span>Total</span>
+                  <span style={{ color: '#FF6B00' }}>{selectedUser.totalScore} pts</span>
                 </div>
               </div>
-            ) : loadingPlayers ? <div style={{textAlign:"center",padding:"1rem",color:"#888"}}>Loading...</div> : teamPlayers.length > 0 ? (<div>{teamPlayers.map((p,i)=>(<div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 0",borderBottom:"0.5px solid #f0f0f0",fontSize:13}}><span style={{fontWeight:500}}>{p.n}</span><span style={{fontSize:10,color:"#888"}}>{p.r} · {p.c}cr</span></div>))}</div>) : <div style={{color:"#888",textAlign:"center",padding:"1.5rem",fontSize:13}}>No team submitted yet.</div>}
+            ) : (
+              <div style={{ padding: '2rem', textAlign: 'center', color: '#888', fontSize: 13 }}>
+                Team details not available yet. Points will show once the match starts.
+              </div>
+            )}
           </div>
         </div>
       )}
