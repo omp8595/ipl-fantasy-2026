@@ -1,4 +1,5 @@
 [build]
+  environment = { SECRETS_SCAN_SMART_DETECTION_ENABLED = "false" }
   command = "npm run build"
   publish = ".next"
 
