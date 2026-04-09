@@ -3,7 +3,8 @@ const{matchId,cricapiId,secret}=req.query;
 if(secret!==process.env.CRON_SECRET)return res.status(401).json({error:"Unauthorized"});
 if(!matchId||!cricapiId)return res.status(400).json({error:"Need matchId and cricapiId"});
 try{
-const apiKey=process.env.CRICKETDATA_API_KEY||"30dd02c2-f08d-4532-a9a4-09daf3a6766a";
+const apiKey=process.env.CRICKETDATA_API_KEY;
+if(!apiKey)return res.status(500).json({error:"CRICKETDATA_API_KEY not configured"});
 const response=await fetch(`https://api.cricapi.com/v1/match_scorecard?apikey=${apiKey}&id=${cricapiId}`);
 const data=await response.json();
 if(data.status==="failure"||!data.data?.scorecard)return res.status(200).json({status:"no scorecard yet",reason:data.reason});
