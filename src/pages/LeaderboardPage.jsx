@@ -1,4 +1,4 @@
-import{useState}from"react";import{db}from"../lib/firebase";import{doc,getDoc}from"firebase/firestore";import{useLeaderboard}from"../hooks/useRealtimeData";import{useAuth}from"../hooks/useAuth";export default function LeaderboardPage({contestId,contestName}){const{user}=useAuth();const{entries,loading}=useLeaderboard(contestId);const[sel,setSel]=useState(null);const[players,setPlayers]=useState([]);const[loadingP,setLoadingP]=useState(false);const myEntry=entries.find(e=>e.userId===user?.uid);
+import{useState,useEffect}from"react";import{db}from"../lib/firebase";import{doc,getDoc}from"firebase/firestore";import{useLeaderboard}from"../hooks/useRealtimeData";import{useAuth}from"../hooks/useAuth";export default function LeaderboardPage({contestId,contestName}){const{user}=useAuth();const{entries,loading}=useLeaderboard(contestId);const[sel,setSel]=useState(null);const[players,setPlayers]=useState([]);const[loadingP,setLoadingP]=useState(false);const myEntry=entries.find(e=>e.userId===user?.uid);
   useEffect(()=>{
     if(!contestId)return;
     const poll=async()=>{
