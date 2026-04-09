@@ -74,7 +74,7 @@ export default function LeaderboardPage({ contestId, contestName }) {
                   <span>Total</span><span style={{ color: '#FF6B00' }}>{sel.totalScore} pts</span>
                 </div>
               </div>
-            ) : <div style={{ color: '#888', textAlign: 'center', padding: '1.5rem', fontSize: 13 }}>No team data yet. Points update when match starts.</div>}
+            ) : loadingPlayers ? <div style={{textAlign:"center",padding:"1rem",color:"#888"}}>Loading...</div> : teamPlayers.length > 0 ? (<div>{teamPlayers.map((p,i)=>(<div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 0",borderBottom:"0.5px solid #f0f0f0",fontSize:13}}><span style={{fontWeight:500}}>{p.n}</span><span style={{fontSize:10,color:"#888"}}>{p.r} · {p.c}cr</span></div>))}</div>) : <div style={{color:"#888",textAlign:"center",padding:"1.5rem",fontSize:13}}>No team submitted yet.</div>}
           </div>
         </div>
       )}
