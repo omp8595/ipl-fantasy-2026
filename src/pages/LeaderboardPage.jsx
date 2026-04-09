@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState } from 'react';\nimport { db } from '../lib/firebase';\nimport { doc, getDoc } from 'firebase/firestore';
 import { useLeaderboard } from '../hooks/useRealtimeData';
 import { useAuth } from '../hooks/useAuth';
 
 export default function LeaderboardPage({ contestId, contestName }) {
   const { user } = useAuth();
   const { entries, loading } = useLeaderboard(contestId);
-  const [sel, setSel] = useState(null);
+  const [sel, setSel] = useState(null);\n  const [teamPlayers, setTeamPlayers] = useState([]);\n  const [loadingPlayers, setLoadingPlayers] = useState(false);
   const myEntry = entries.find(e => e.userId === user?.uid);
   const s = {
     card: { background: '#fff', border: '0.5px solid #e5e5e5', borderRadius: 12, padding: '1rem 1.25rem', marginBottom: '1rem' },
