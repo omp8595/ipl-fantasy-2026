@@ -1,7 +1,8 @@
 ﻿import { useState, useEffect } from 'react';
 import { db } from '../lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import { callFn } from '../lib/firebase';
+import { db } from '../lib/firebase';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../hooks/useAuth';
 
 const BUDGET = 100;
@@ -142,7 +143,7 @@ export default function SelectTeamPage() {
   async function handleSubmit() {
     if (selected.length !== 11 || !capId || !vcId) { showToast('Select 11 players with C & VC'); return; }
     setSubmitting(true);
-    try { await callFn.submitTeam({ matchId, players: selected, captainId: capId, vcId, budgetUsed }); showToast('Team submitted! Now join a contest.'); }
+    try { await setDoc(doc(db, 'teams', user.uid), { matchId, players: selected, captainId: capId, vcId, budgetUsed, updatedAt: serverTimestamp() }); showToast('Team submitted! Now join a contest.'); }
     catch (err) { showToast(err.message || 'Error submitting team'); }
     finally { setSubmitting(false); }
   }
